@@ -1,4 +1,6 @@
 version: 2.1
+orbs:
+  continuation: circleci/continuation@0.1.2
 
 jobs: # basic units of work in a run
   build:
@@ -32,9 +34,22 @@ jobs: # basic units of work in a run
       - run:
           name: "Print an env var stored in a Context"
           command: echo ${CONTEXT_ENV_VAR}
+  test:
+    executor: continuation/default
+    steps:
+      - checkout
+      - run:
+          shell: /bin/sh
+          name: Setup VirtualEnv
+          command: |
+            echo 'export TAG=0.1.${CIRCLE_BUILD_NUM}' >> $BASH_ENV
+      - run:
+          name: "What was my custom environment variable?"
+          command: echo ${MY_ENV_VAR}
 
 workflows: # a single workflow with a single job called build
   build:
     jobs:
       - build:
           context: Testing-Env-Vars
+      - test
