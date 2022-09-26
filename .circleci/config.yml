@@ -51,7 +51,6 @@ jobs: # basic units of work in a run
       - attach_workspace:
           at: /tmp/cci-test/workspace
       - run: cat workspace/new-env-vars >> $BASH_ENV
-      - checkout
       - run:
           shell: /bin/sh
           name: Setup VirtualEnv
