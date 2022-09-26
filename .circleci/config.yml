@@ -2,8 +2,12 @@ version: 2.1
 orbs:
   continuation: circleci/continuation@0.1.2
 
+defaults: &defaults
+  working_directory: /tmp/cci-test
+
 jobs: # basic units of work in a run
   build:
+    <<: *defaults
     docker: # use the Docker executor
       # CircleCI Node images available at: https://circleci.com/developer/images/image/cimg/node
       - image: cimg/node:17.2.0
@@ -34,9 +38,18 @@ jobs: # basic units of work in a run
       - run:
           name: "Print an env var stored in a Context"
           command: echo ${CONTEXT_ENV_VAR}
+      - run: echo "export MY_ENV_VAR=$MY_ENV_VAR" >> workspace/new-env-vars
+      - persist_to_workspace:
+          root: workspace
+          paths:
+              - new-env-vars
   test:
+    <<: *defaults
     executor: continuation/default
     steps:
+      - attach_workspace:
+          at: /tmp/cci-test/workspace
+      - run: cat workspace/new-env-vars >> $BASH_ENV
       - checkout
       - run:
           shell: /bin/sh
