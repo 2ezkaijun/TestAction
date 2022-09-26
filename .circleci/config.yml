@@ -38,6 +38,7 @@ jobs: # basic units of work in a run
       - run:
           name: "Print an env var stored in a Context"
           command: echo ${CONTEXT_ENV_VAR}
+      - run: mkdir -p workspace
       - run: echo "export MY_ENV_VAR=$MY_ENV_VAR" >> workspace/new-env-vars
       - persist_to_workspace:
           root: workspace
